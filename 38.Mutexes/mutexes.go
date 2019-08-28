@@ -3,7 +3,7 @@
 // For more complex state we can use a <em>[mutex](http://en.wikipedia.org/wiki/Mutual_exclusion)</em>
 // to safely access data across multiple goroutines.
 /*
-在前面的例子中，我们看到了如何使用原子操作来管理简单的计数器。 
+在前面的例子中，我们看到了如何使用原子操作来管理简单的计数器。
 对于更加复杂的情况，我们可以使用一个互斥锁 来在 Go 协程间安全的访问数据。
 */
 package main
@@ -28,13 +28,14 @@ func main() {
 
 	// We'll keep track of how many read and write
 	// operations we do.
+	//我们将跟踪我们执行的读写操作数量。
 	var readOps uint64
 	var writeOps uint64
 
 	// Here we start 100 goroutines to execute repeated
 	// reads against the state, once per millisecond in
 	// each goroutine.
-	//这里我们运行 100 个 Go 协程来重复读取 state。
+	//在这里，我们启动 100 个 goroutines 来执行针对状态的重复读取，每毫秒一次。
 	for r := 0; r < 100; r++ {
 		go func() {
 			total := 0
@@ -47,8 +48,8 @@ func main() {
 				// `Unlock()` the mutex, and increment
 				// the `readOps` count.
 				/*
-				每次循环读取，我们使用一个键来进行访问， Lock() 这个 mutex 来确保对 state 的 独占访问，
-				读取选定的键的值，Unlock() 这个 mutex，并且 ops 值加 1。
+					每次循环读取，我们使用一个键来进行访问， Lock() 这个 mutex 来确保对 state 的 独占访问，
+					读取选定的键的值，Unlock() 这个 mutex，并且 ops 值加 1。
 				*/
 				key := rand.Intn(5)
 				mutex.Lock()
@@ -57,6 +58,7 @@ func main() {
 				atomic.AddUint64(&readOps, 1)
 
 				// Wait a bit between reads.
+				//在读取之间稍等一下。
 				time.Sleep(time.Millisecond)
 			}
 		}()
